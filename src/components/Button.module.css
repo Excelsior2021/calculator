@@ -1,8 +1,26 @@
 .button {
+  cursor: pointer;
   width: 20%;
   max-width: 115px;
   min-width: 70px;
   height: 75px;
-  border: 1px grey solid;
+  border: none;
   border-radius: 20%;
+  background-color:lightblue;
+}
+
+.button--half {
+  cursor: default;
+  display: flex;
+  justify-content: space-between;
+  border: none;
+  background-color: transparent;
+}
+
+.half-button {
+  cursor: pointer;
+  border-radius: 20%;
+  border: 1px grey solid;
+  flex-basis: 46% ;
+  background-color: rgb(85, 190, 226);
 }
