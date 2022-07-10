@@ -148,15 +148,21 @@ function Calculator(props) {
 
     if (action.type === "SUM") {
       const input = state.input.replace(/×/gi, "*")
-      const sum = evaluate(input)
-      return {
-        ...state,
-        result: sum
+      try {
+        const sum = evaluate(input)
+        return {
+          ...state,
+          result: sum
+        }
+      } catch (err) {
+        return {
+          ...state,
+          result: err.name
+        }
       }
     }
 
     if (action.type === "BRACKET") {
-      console.log(leftBracket, rightBracket)
       let input;
       if (action.bracket === "(") {
         input = state.input.concat("(")
