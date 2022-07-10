@@ -20,6 +20,7 @@
 
 .half-button {
   cursor: pointer;
+  border: none;
   border-radius: 20%;
   border: 1px grey solid;
   flex-basis: 46% ;
