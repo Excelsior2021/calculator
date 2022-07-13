@@ -13,6 +13,6 @@ You can use a keyboard and input key presses to log valid entries.
 
 AC - ESC key <br>
 CE - Backspace Key <br>
-Sum - Enter Key <br>
+Sum - Enter/Return Key <br>
 
-You can also use the tab key to navigate the buttons of the calculator. By using Tab + Enter, Enter will not evaluate the input until Enter is pressed a second time.
+You can also use the tab key to navigate the buttons of the calculator. By using Tab + Enter/Return, Enter/Return will not evaluate the input until Enter/Return is pressed for a second time.
