@@ -11,8 +11,8 @@ This calculator is able to perform basic arithmetic operations. There is some lo
 
 You can use a keyboard and input keypresses to log valid entries.
 
-AC - ESC key
-CE - Backspace Key
-Sum - Enter Key
+AC - ESC key <br>
+CE - Backspace Key <br>
+Sum - Enter Key <br>
 
 You can also use the tab key to navigate the buttons of the calculator. By using Tab + Enter, Enter will not evaluate the input until Enter is pressed a second time.
