@@ -1,5 +1,5 @@
 import { useState, useReducer } from "react"
-import { evaluate } from "mathjs"
+import { evaluate, format } from "mathjs"
 import Button, { HalfButton } from "./Button"
 import styles from "./Calculator.module.css"
 import buttonStyles from "./Button.module.css"
@@ -9,11 +9,11 @@ const intialState = {
   input: "",
 }
 
-function Calculator(props) {
+function Calculator() {
   const [decimal, setDecimal] = useState(false)
   const [leftBracket, setLeftBracket] = useState(0)
   const [rightBracket, setRightBracket] = useState(0)
-
+  const [activeElement, setActiveElement] = useState(false)
 
   const [state, dispatchAction] = useReducer(reducer, intialState)
 
@@ -43,7 +43,7 @@ function Calculator(props) {
     }
 
     if (action.type === "CLEAR") {
-      if (action.clear === "CE") {
+      if (action.clear === "CE" || action.clear === "Backspace") {
         const input = state.input.substr(0, state.input.length - 1)
         if (lastEntry === ".") {
           setDecimal(false)
@@ -66,7 +66,7 @@ function Calculator(props) {
         }
       }
 
-      if (action.clear === "AC") {
+      if (action.clear === "AC" || action.clear === "Escape") {
         setDecimal(false)
         setLeftBracket(0)
         setRightBracket(0)
@@ -149,10 +149,12 @@ function Calculator(props) {
     if (action.type === "SUM") {
       const input = state.input.replace(/×/gi, "*")
       try {
-        const sum = evaluate(input)
-        return {
-          ...state,
-          result: sum
+        if (input !== "") {
+          const sum = format(evaluate(input), { notation: "auto", precision: 14, lowerExp: -12, upperExp: 12 })
+          return {
+            ...state,
+            result: sum
+          }
         }
       } catch (err) {
         return {
@@ -201,49 +203,66 @@ function Calculator(props) {
         ...state
       }
     }
-
     return intialState
   }
 
+  //Keypress function
+  document.onkeydown = event => {
+    keydownHandler(event)
+  }
+
+  //Action Handlers
+  const keydownHandler = event => {
+    if (event.key === "Tab") {
+      setActiveElement(true)
+    }
+    if (event.key === "Enter") {
+      setActiveElement(false)
+    }
+    calculatorActionHandler(event.key)
+  }
+
   const buttonPressHandler = event => {
-    const button = event.target.innerText
+    calculatorActionHandler(event.target.innerText)
+    event.target.blur()
+  }
 
-    if (parseInt(button) || button === "0") {
-      dispatchAction({ type: "NUMBER", number: button, })
+  const calculatorActionHandler = action => {
+    if (parseInt(action) || action === "0") {
+      dispatchAction({ type: "NUMBER", number: action, })
     }
 
-    if (button === "CE" || button === "AC") {
-      dispatchAction({ type: "CLEAR", clear: button })
+    if (action === "CE" || action === "AC" || action === "Escape" || action === "Backspace") {
+      dispatchAction({ type: "CLEAR", clear: action })
     }
 
-    if (button === ".") {
+    if (action === ".") {
       dispatchAction({ type: "DECIMAL" })
     }
 
-    if (button === "+" || button === "-" || button === "×" || button === "/") {
-      dispatchAction({ type: "ARITHMETIC", symbol: button })
+    if (action === "+" || action === "-" || action === "×" || action === "/") {
+      dispatchAction({ type: "ARITHMETIC", symbol: action })
     }
 
-    if (button === "=") {
+    if ((action === "=" || action === "Enter") && !activeElement) {
       dispatchAction({ type: "SUM" })
     }
 
-    if (button === "(" || button === ")") {
-      dispatchAction({ type: "BRACKET", bracket: button })
+    if (action === "(" || action === ")") {
+      dispatchAction({ type: "BRACKET", bracket: action })
     }
 
-    if (button === "+/-") {
+    if (action === "+/-") {
       dispatchAction({ type: "POS/NEG" })
     }
   }
 
   return <div className={styles.calculator}>
-
     <div className={styles.display}>
       <div className={styles["display--result"]}>
         {state.result}
       </div>
-      <div className={styles["display--input"]}>
+      <div className={styles["display--input"]} onKeyDown={buttonPressHandler}>
         {state.input}
       </div>
     </div>
@@ -329,7 +348,6 @@ function Calculator(props) {
           =
         </Button>
       </div>
-
     </div>
   </div>
 }
