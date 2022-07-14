@@ -14,11 +14,16 @@ function Calculator() {
   const [leftBracket, setLeftBracket] = useState(0)
   const [rightBracket, setRightBracket] = useState(0)
   const [activeElement, setActiveElement] = useState(false)
+  const [sumPressed, setSumPressed] = useState(false)
 
   const [state, dispatchAction] = useReducer(reducer, intialState)
 
   function reducer(state, action) {
     const lastEntry = state.input[state.input.length - 1]
+
+    if (action.type !== "SUM") {
+      setSumPressed(false)
+    }
 
     if (action.type === "NUMBER") {
       const input = state.input.concat(action.number)
@@ -128,7 +133,7 @@ function Calculator() {
             input,
           }
         }
-        if (action.symbol === "×") {
+        if (action.symbol === "×" || action.symbol === "*") {
           const input = state.input.concat("×")
           return {
             ...state,
@@ -148,9 +153,20 @@ function Calculator() {
 
     if (action.type === "SUM") {
       const input = state.input.replace(/×/gi, "*")
+
+      if (sumPressed) {
+        setSumPressed(false)
+        return {
+          ...state,
+          input: state.result,
+          result: ""
+        }
+      }
+
       try {
         if (input !== "") {
           const sum = format(evaluate(input), { notation: "auto", precision: 14, lowerExp: -12, upperExp: 12 })
+          setSumPressed(true)
           return {
             ...state,
             result: sum
@@ -240,7 +256,7 @@ function Calculator() {
       dispatchAction({ type: "DECIMAL" })
     }
 
-    if (action === "+" || action === "-" || action === "×" || action === "/") {
+    if (action === "+" || action === "-" || action === "×" || action === "/" || action === "*") {
       dispatchAction({ type: "ARITHMETIC", symbol: action })
     }
 
