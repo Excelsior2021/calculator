@@ -20,6 +20,17 @@ function Calculator() {
 
   function reducer(state, action) {
     const lastEntry = state.input[state.input.length - 1]
+    let message = "MaxCharLimit"
+    const inputLengthCheck = input => {
+      if (window.innerWidth < 500) {
+        if (input.length === 14) {
+          return true
+        }
+      }
+      if (input.length === 20) {
+        return true
+      }
+    }
 
     if (action.type !== "SUM") {
       setSumPressed(false)
@@ -27,6 +38,12 @@ function Calculator() {
 
     if (action.type === "NUMBER") {
       const input = state.input.concat(action.number)
+      if (inputLengthCheck(input)) {
+        return {
+          ...state,
+          result: message
+        }
+      }
       if (state.input === "0") {
         if (action.number === "0") {
           return {
@@ -50,24 +67,27 @@ function Calculator() {
     if (action.type === "CLEAR") {
       if (action.clear === "CE" || action.clear === "Backspace") {
         const input = state.input.substr(0, state.input.length - 1)
-        if (lastEntry === ".") {
-          setDecimal(false)
-        }
-        if (lastEntry === "(") {
-          setLeftBracket(prevState => prevState - 1)
-        }
-        if (lastEntry === ")") {
-          setRightBracket(prevState => prevState - 1)
-        }
-        if (state.input === "0.") {
+        if (!inputLengthCheck(input)) {
+          if (lastEntry === ".") {
+            setDecimal(false)
+          }
+          if (lastEntry === "(") {
+            setLeftBracket(prevState => prevState - 1)
+          }
+          if (lastEntry === ")") {
+            setRightBracket(prevState => prevState - 1)
+          }
+          if (state.input === "0.") {
+            return {
+              ...state,
+              input: ""
+            }
+          }
           return {
             ...state,
-            input: ""
+            result: "",
+            input
           }
-        }
-        return {
-          ...state,
-          input
         }
       }
 
@@ -86,6 +106,12 @@ function Calculator() {
     if (action.type === "DECIMAL") {
       if (state.input === "") {
         const input = "0."
+        if (inputLengthCheck(input)) {
+          return {
+            ...state,
+            result: message
+          }
+        }
         setDecimal(true)
         return {
           ...state,
@@ -96,6 +122,12 @@ function Calculator() {
       if (!decimal) {
         if (!parseInt(lastEntry) && lastEntry !== "0") {
           const input = state.input.concat("0.")
+          if (inputLengthCheck(input)) {
+            return {
+              ...state,
+              result: message
+            }
+          }
           setDecimal(true)
           return {
             ...state,
@@ -104,6 +136,12 @@ function Calculator() {
         }
 
         const input = state.input.concat(".")
+        if (inputLengthCheck(input)) {
+          return {
+            ...state,
+            result: message
+          }
+        }
         setDecimal(true)
         return {
           ...state,
@@ -121,6 +159,12 @@ function Calculator() {
         setDecimal(false)
         if (action.symbol === "+") {
           const input = state.input.concat("+")
+          if (inputLengthCheck(input)) {
+            return {
+              ...state,
+              result: message
+            }
+          }
           return {
             ...state,
             input,
@@ -128,6 +172,12 @@ function Calculator() {
         }
         if (action.symbol === "-") {
           const input = state.input.concat("-")
+          if (inputLengthCheck(input)) {
+            return {
+              ...state,
+              result: message
+            }
+          }
           return {
             ...state,
             input,
@@ -135,6 +185,12 @@ function Calculator() {
         }
         if (action.symbol === "×" || action.symbol === "*") {
           const input = state.input.concat("×")
+          if (inputLengthCheck(input)) {
+            return {
+              ...state,
+              result: message
+            }
+          }
           return {
             ...state,
             input,
@@ -142,6 +198,12 @@ function Calculator() {
         }
         if (action.symbol === "/") {
           const input = state.input.concat("/")
+          if (inputLengthCheck(input)) {
+            return {
+              ...state,
+              result: message
+            }
+          }
           return {
             ...state,
             input,
@@ -153,6 +215,12 @@ function Calculator() {
 
     if (action.type === "SUM") {
       const input = state.input.replace(/×/gi, "*")
+      if (inputLengthCheck(input)) {
+        return {
+          ...state,
+          result: message
+        }
+      }
 
       if (sumPressed) {
         setSumPressed(false)
@@ -184,6 +252,12 @@ function Calculator() {
       let input;
       if (action.bracket === "(") {
         input = state.input.concat("(")
+        if (inputLengthCheck(input)) {
+          return {
+            ...state,
+            result: message
+          }
+        }
         setLeftBracket(prevState => prevState + 1)
         return {
           ...state,
@@ -194,6 +268,12 @@ function Calculator() {
       if (action.bracket === ")") {
         if ((parseInt(lastEntry) || lastEntry === "0" || lastEntry === ")") && (rightBracket < leftBracket)) {
           input = state.input.concat(")")
+          if (inputLengthCheck(input)) {
+            return {
+              ...state,
+              result: message
+            }
+          }
           setRightBracket(prevState => prevState + 1)
           return {
             ...state,
@@ -210,6 +290,12 @@ function Calculator() {
     if (action.type === "POS/NEG") {
       if (state.input === "" || lastEntry === "0" || lastEntry === "(") {
         const input = state.input.concat("-")
+        if (inputLengthCheck(input)) {
+          return {
+            ...state,
+            result: message
+          }
+        }
         return {
           ...state,
           input
@@ -271,6 +357,8 @@ function Calculator() {
     if (action === "+/-") {
       dispatchAction({ type: "POS/NEG" })
     }
+
+
   }
 
   return <div className={styles.calculator}>
