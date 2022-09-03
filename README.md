@@ -9,7 +9,7 @@ This calculator is able to perform basic arithmetic operations. There is some lo
   <li>Operators can not follow each other</li>
 </ul>
 
-You can use a keyboard and input key presses to log valid entries.
+You can use a keyboard and input key presses to log valid entries. </br>
 AC - ESC key <br>
 CE - Backspace Key <br>
 Sum - Enter/Return Key <br>
