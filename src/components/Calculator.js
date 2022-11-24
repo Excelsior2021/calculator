@@ -22,31 +22,27 @@ const reducer = (
   setSumPressed
 ) => {
   const lastEntry = state.input[state.input.length - 1];
+
   let message = "MaxCharLimit";
+
   const inputLengthCheck = input => {
     if (window.innerWidth < 500) {
-      if (input.length === 14) {
-        return true;
-      }
+      if (input.length === 14) return true;
     }
-    if (input.length === 20) {
-      return true;
-    }
+    if (input.length === 20) return true;
   };
 
-  if (action.type !== "SUM") {
-    setSumPressed(false);
-  }
+  if (action.type !== "SUM") setSumPressed(false);
 
   if (action.type === "NUMBER") {
     const input = state.input.concat(action.number);
-    if (inputLengthCheck(input)) {
+    if (inputLengthCheck(input))
       return {
         ...state,
         result: message,
       };
-    }
-    if (state.input === "0") {
+
+    if (state.input === "0")
       if (action.number === "0") {
         return {
           ...state,
@@ -58,7 +54,6 @@ const reducer = (
           input,
         };
       }
-    }
 
     return {
       ...state,
