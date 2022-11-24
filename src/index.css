@@ -1,13 +1,16 @@
-* {
+*,
+*::before,
+*::after {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  padding: 0;
   box-sizing: border-box;
 }
 
 body {
   background-color: grey;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 button {
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }

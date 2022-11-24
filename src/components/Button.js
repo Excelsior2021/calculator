@@ -1,15 +1,15 @@
-import styles from "./Button.module.css"
+import styles from "./Button.module.css";
 
-function Button(props) {
-  return <button className={styles.button} onClick={props.buttonPress}>
-    {props.children}
+const Button = ({ buttonPress, button }) => (
+  <button className={styles.button} onClick={buttonPress}>
+    {button}
   </button>
-}
+);
 
-export function HalfButton(props) {
-  return <button className={styles["half-button"]} onClick={props.buttonPress}>
-    {props.children}
+export const HalfButton = ({ buttonPress, button }) => (
+  <button className={styles["half-button"]} onClick={buttonPress}>
+    {button}
   </button>
-}
+);
 
-export default Button
+export default Button;
