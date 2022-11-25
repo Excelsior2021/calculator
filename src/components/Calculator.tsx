@@ -9,23 +9,36 @@ const intialState = {
   input: "",
 };
 
+type state = {
+  result: string;
+  input: string;
+};
+
+type action = {
+  type: string;
+  number?: string;
+  clear?: string;
+  symbol?: string;
+  bracket?: string;
+};
+
 const reducer = (
-  state,
-  action,
-  decimal,
-  leftBracket,
-  rightBracket,
-  sumPressed,
-  setDecimal,
-  setLeftBracket,
-  setRightBracket,
-  setSumPressed
+  state: state,
+  action: action,
+  decimal: boolean,
+  leftBracket: number,
+  rightBracket: number,
+  sumPressed: boolean,
+  setDecimal: React.Dispatch<React.SetStateAction<boolean>>,
+  setLeftBracket: React.Dispatch<React.SetStateAction<number>>,
+  setRightBracket: React.Dispatch<React.SetStateAction<number>>,
+  setSumPressed: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   const lastEntry = state.input[state.input.length - 1];
 
   let message = "MaxCharLimit";
 
-  const inputLengthCheck = input => {
+  const inputLengthCheck = (input: string) => {
     if (window.innerWidth < 500) {
       if (input.length === 14) return true;
     }
@@ -35,30 +48,31 @@ const reducer = (
   if (action.type !== "SUM") setSumPressed(false);
 
   if (action.type === "NUMBER") {
-    const input = state.input.concat(action.number);
-    if (inputLengthCheck(input))
+    if (action.number) {
+      const input = state.input.concat(action.number);
+      if (inputLengthCheck(input))
+        return {
+          ...state,
+          result: message,
+        };
+      if (state.input === "0")
+        if (action.number === "0") {
+          return {
+            ...state,
+          };
+        } else {
+          state.input = "";
+          return {
+            ...state,
+            input,
+          };
+        }
+
       return {
         ...state,
-        result: message,
+        input,
       };
-
-    if (state.input === "0")
-      if (action.number === "0") {
-        return {
-          ...state,
-        };
-      } else {
-        state.input = "";
-        return {
-          ...state,
-          input,
-        };
-      }
-
-    return {
-      ...state,
-      input,
-    };
+    }
   }
 
   if (action.type === "CLEAR") {
@@ -242,7 +256,7 @@ const reducer = (
           result: sum,
         };
       }
-    } catch (err) {
+    } catch (err: any) {
       return {
         ...state,
         result: err.name,
@@ -329,10 +343,11 @@ const Calculator = () => {
     setLeftBracket,
     setRightBracket,
     setSumPressed,
-  ];
+  ] as const;
 
   const [state, dispatchAction] = useReducer(
-    (state, action) => reducer(state, action, ...reducerArguments),
+    (state: state, action: action) =>
+      reducer(state, action, ...reducerArguments),
     intialState
   );
 
@@ -342,7 +357,7 @@ const Calculator = () => {
   };
 
   //Action Handlers
-  const keydownHandler = event => {
+  const keydownHandler = (event: KeyboardEvent) => {
     if (event.key === "Tab") {
       setActiveElement(true);
     }
@@ -352,12 +367,18 @@ const Calculator = () => {
     calculatorActionHandler(event.key);
   };
 
-  const buttonPressHandler = event => {
-    calculatorActionHandler(event.target.innerText);
-    event.target.blur();
+  const buttonPressHandler = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    button: string
+  ) => {
+    calculatorActionHandler(button);
+    const element = event.target as HTMLElement;
+    if (element) {
+      element.blur();
+    }
   };
 
-  const calculatorActionHandler = action => {
+  const calculatorActionHandler = (action: string) => {
     if (parseInt(action) || action === "0")
       dispatchAction({ type: "NUMBER", number: action });
 
@@ -400,31 +421,45 @@ const Calculator = () => {
     <div className={styles.calculator}>
       <div className={styles.display}>
         <div className={styles["display--result"]}>{state.result}</div>
-        <div
-          className={styles["display--input"]}
-          onKeyDown={buttonPressHandler}
-        >
-          {state.input}
-        </div>
+        <div className={styles["display--input"]}>{state.input}</div>
       </div>
 
       <div className={styles.actions}>
         <div className={styles.row}>
-          <Button buttonPress={buttonPressHandler} button="AC" />
-          <Button buttonPress={buttonPressHandler} button="CE" />
+          <Button
+            buttonPress={event => buttonPressHandler(event, "AC")}
+            button="AC"
+          />
+          <Button
+            buttonPress={event => buttonPressHandler(event, "CE")}
+            button="CE"
+          />
           <div
             className={`${buttonStyles.button} ${buttonStyles["button--half"]}`}
           >
-            <HalfButton buttonPress={buttonPressHandler} button="(" />
-            <HalfButton buttonPress={buttonPressHandler} button=")" />
+            <HalfButton
+              buttonPress={event => buttonPressHandler(event, "(")}
+              button="("
+            />
+            <HalfButton
+              buttonPress={event => buttonPressHandler(event, ")")}
+              button=")"
+            />
           </div>
-          <Button buttonPress={buttonPressHandler} button="/" />
+          <Button
+            buttonPress={event => buttonPressHandler(event, "/")}
+            button="/"
+          />
         </div>
 
         {buttons.map((_row, i) => (
-          <div className={styles.row}>
+          <div key={i} className={styles.row}>
             {buttons[i].map(button => (
-              <Button buttonPress={buttonPressHandler} button={button} />
+              <Button
+                key={button}
+                buttonPress={event => buttonPressHandler(event, button)}
+                button={button}
+              />
             ))}
           </div>
         ))}
