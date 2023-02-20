@@ -18,5 +18,3 @@ Sum - Enter/Return Key <br>
 Press = or Enter/Return twice to have the sum of an eqaution logged into the input.
 
 You can also use the tab key to navigate the buttons of the calculator. By using Tab + Enter/Return, Enter/Return will not evaluate the input until Enter/Return is pressed for a second time.
-
-excelsior2021.github.io/calculator
