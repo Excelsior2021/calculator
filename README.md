@@ -1,6 +1,6 @@
 # web-calculator
 
-A calculator for the web, built with React & TypeScript. [use app](https://excelsior2021.github.io/calculator)
+A calculator for the web, built with React & TypeScript. <a href="https://excelsior2021.github.io/calculator" target="_blank">use app</a>
 
 This calculator is able to perform basic arithmetic operations. There is some logic to reduce syntax errors. Such as:
 
