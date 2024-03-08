@@ -1,26 +1,26 @@
-import { useState, useReducer } from "react";
-import { evaluate, format } from "mathjs";
-import Button, { HalfButton } from "./Button";
-import styles from "./Calculator.module.css";
-import buttonStyles from "./Button.module.css";
+import React, { useState, useReducer } from "react"
+import { evaluate, format } from "mathjs"
+import Button, { HalfButton } from "./Button"
+import styles from "./Calculator.module.css"
+import buttonStyles from "./Button.module.css"
 
-const intialState = {
+const initialState = {
   result: "",
   input: "",
-};
+}
 
 type state = {
-  result: string;
-  input: string;
-};
+  result: string
+  input: string
+}
 
 type action = {
-  type: string;
-  number?: string;
-  clear?: string;
-  symbol?: string;
-  bracket?: string;
-};
+  type: string
+  number?: string
+  clear?: string
+  symbol?: string
+  bracket?: string
+}
 
 const reducer = (
   state: state,
@@ -34,212 +34,212 @@ const reducer = (
   setRightBracket: React.Dispatch<React.SetStateAction<number>>,
   setSumPressed: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  const lastEntry = state.input[state.input.length - 1];
+  const lastEntry = state.input[state.input.length - 1]
 
-  let message = "MaxCharLimit";
+  let message = "MaxCharLimit"
 
   const inputLengthCheck = (input: string) => {
     if (window.innerWidth < 500) {
-      if (input.length === 14) return true;
+      if (input.length === 14) return true
     }
-    if (input.length === 20) return true;
-  };
+    if (input.length === 20) return true
+  }
 
-  if (action.type !== "SUM") setSumPressed(false);
+  if (action.type !== "SUM") setSumPressed(false)
 
   if (action.type === "NUMBER") {
     if (action.number) {
-      const input = state.input.concat(action.number);
+      const input = state.input.concat(action.number)
       if (inputLengthCheck(input))
         return {
           ...state,
           result: message,
-        };
+        }
       if (state.input === "0")
         if (action.number === "0") {
           return {
             ...state,
-          };
+          }
         } else {
-          state.input = "";
+          state.input = ""
           return {
             ...state,
             input,
-          };
+          }
         }
 
       return {
         ...state,
         input,
-      };
+      }
     }
   }
 
   if (action.type === "CLEAR") {
     if (action.clear === "CE" || action.clear === "Backspace") {
-      const input = state.input.substr(0, state.input.length - 1);
+      const input = state.input.substr(0, state.input.length - 1)
       if (!inputLengthCheck(input)) {
         if (lastEntry === ".") {
-          setDecimal(false);
+          setDecimal(false)
         }
         if (lastEntry === "(") {
-          setLeftBracket(prevState => prevState - 1);
+          setLeftBracket((prevState: number) => prevState - 1)
         }
         if (lastEntry === ")") {
-          setRightBracket(prevState => prevState - 1);
+          setRightBracket((prevState: number) => prevState - 1)
         }
         if (state.input === "0.") {
           return {
             ...state,
             input: "",
-          };
+          }
         }
         return {
           ...state,
           result: "",
           input,
-        };
+        }
       }
     }
 
     if (action.clear === "AC" || action.clear === "Escape") {
-      setDecimal(false);
-      setLeftBracket(0);
-      setRightBracket(0);
+      setDecimal(false)
+      setLeftBracket(0)
+      setRightBracket(0)
       return {
         ...state,
         result: "",
         input: "",
-      };
+      }
     }
   }
 
   if (action.type === "DECIMAL") {
     if (state.input === "") {
-      const input = "0.";
+      const input = "0."
       if (inputLengthCheck(input)) {
         return {
           ...state,
           result: message,
-        };
+        }
       }
-      setDecimal(true);
+      setDecimal(true)
       return {
         ...state,
         input,
-      };
+      }
     }
 
     if (!decimal) {
       if (!parseInt(lastEntry) && lastEntry !== "0") {
-        const input = state.input.concat("0.");
+        const input = state.input.concat("0.")
         if (inputLengthCheck(input)) {
           return {
             ...state,
             result: message,
-          };
+          }
         }
-        setDecimal(true);
+        setDecimal(true)
         return {
           ...state,
           input,
-        };
+        }
       }
 
-      const input = state.input.concat(".");
+      const input = state.input.concat(".")
       if (inputLengthCheck(input)) {
         return {
           ...state,
           result: message,
-        };
+        }
       }
-      setDecimal(true);
+      setDecimal(true)
       return {
         ...state,
         input,
-      };
+      }
     }
 
     return {
       ...state,
-    };
+    }
   }
 
   if (action.type === "ARITHMETIC") {
     if (parseInt(lastEntry) || lastEntry === "0" || lastEntry === ")") {
-      setDecimal(false);
+      setDecimal(false)
       if (action.symbol === "+") {
-        const input = state.input.concat("+");
+        const input = state.input.concat("+")
         if (inputLengthCheck(input)) {
           return {
             ...state,
             result: message,
-          };
+          }
         }
         return {
           ...state,
           input,
-        };
+        }
       }
       if (action.symbol === "-") {
-        const input = state.input.concat("-");
+        const input = state.input.concat("-")
         if (inputLengthCheck(input)) {
           return {
             ...state,
             result: message,
-          };
+          }
         }
         return {
           ...state,
           input,
-        };
+        }
       }
       if (action.symbol === "×" || action.symbol === "*") {
-        const input = state.input.concat("×");
+        const input = state.input.concat("×")
         if (inputLengthCheck(input)) {
           return {
             ...state,
             result: message,
-          };
+          }
         }
         return {
           ...state,
           input,
-        };
+        }
       }
       if (action.symbol === "/") {
-        const input = state.input.concat("/");
+        const input = state.input.concat("/")
         if (inputLengthCheck(input)) {
           return {
             ...state,
             result: message,
-          };
+          }
         }
         return {
           ...state,
           input,
-        };
+        }
       }
     }
-    return { ...state };
+    return { ...state }
   }
 
   if (action.type === "SUM") {
-    const input = state.input.replace(/×/gi, "*");
+    const input = state.input.replace(/×/gi, "*")
     if (inputLengthCheck(input)) {
       return {
         ...state,
         result: message,
-      };
+      }
     }
 
     if (sumPressed) {
-      setSumPressed(false);
+      setSumPressed(false)
       return {
         ...state,
         input: state.result,
         result: "",
-      };
+      }
     }
 
     try {
@@ -249,36 +249,36 @@ const reducer = (
           precision: 14,
           lowerExp: -12,
           upperExp: 12,
-        });
-        setSumPressed(true);
+        })
+        setSumPressed(true)
         return {
           ...state,
           result: sum,
-        };
+        }
       }
     } catch (err: any) {
       return {
         ...state,
         result: err.name,
-      };
+      }
     }
   }
 
   if (action.type === "BRACKET") {
-    let input;
+    let input
     if (action.bracket === "(") {
-      input = state.input.concat("(");
+      input = state.input.concat("(")
       if (inputLengthCheck(input)) {
         return {
           ...state,
           result: message,
-        };
+        }
       }
-      setLeftBracket(prevState => prevState + 1);
+      setLeftBracket((prevState: number) => prevState + 1)
       return {
         ...state,
         input,
-      };
+      }
     }
 
     if (action.bracket === ")") {
@@ -286,53 +286,53 @@ const reducer = (
         (parseInt(lastEntry) || lastEntry === "0" || lastEntry === ")") &&
         rightBracket < leftBracket
       ) {
-        input = state.input.concat(")");
+        input = state.input.concat(")")
         if (inputLengthCheck(input)) {
           return {
             ...state,
             result: message,
-          };
+          }
         }
-        setRightBracket(prevState => prevState + 1);
+        setRightBracket((prevState: number) => prevState + 1)
         return {
           ...state,
           input,
-        };
+        }
       }
 
       return {
         ...state,
-      };
+      }
     }
   }
 
   if (action.type === "POS/NEG") {
     if (state.input === "" || lastEntry === "0" || lastEntry === "(") {
-      const input = state.input.concat("-");
+      const input = state.input.concat("-")
       if (inputLengthCheck(input)) {
         return {
           ...state,
           result: message,
-        };
+        }
       }
       return {
         ...state,
         input,
-      };
+      }
     }
     return {
       ...state,
-    };
+    }
   }
-  return intialState;
-};
+  return initialState
+}
 
 const Calculator = () => {
-  const [decimal, setDecimal] = useState(false);
-  const [leftBracket, setLeftBracket] = useState(0);
-  const [rightBracket, setRightBracket] = useState(0);
-  const [activeElement, setActiveElement] = useState(false);
-  const [sumPressed, setSumPressed] = useState(false);
+  const [decimal, setDecimal] = useState(false)
+  const [leftBracket, setLeftBracket] = useState(0)
+  const [rightBracket, setRightBracket] = useState(0)
+  const [activeElement, setActiveElement] = useState(false)
+  const [sumPressed, setSumPressed] = useState(false)
 
   const reducerArguments = [
     decimal,
@@ -343,44 +343,44 @@ const Calculator = () => {
     setLeftBracket,
     setRightBracket,
     setSumPressed,
-  ] as const;
+  ] as const
 
   const [state, dispatchAction] = useReducer(
     (state: state, action: action) =>
       reducer(state, action, ...reducerArguments),
-    intialState
-  );
+    initialState
+  )
 
   //Keypress function
   document.onkeydown = event => {
-    keydownHandler(event);
-  };
+    keydownHandler(event)
+  }
 
   //Action Handlers
   const keydownHandler = (event: KeyboardEvent) => {
     if (event.key === "Tab") {
-      setActiveElement(true);
+      setActiveElement(true)
     }
     if (event.key === "Enter") {
-      setActiveElement(false);
+      setActiveElement(false)
     }
-    calculatorActionHandler(event.key);
-  };
+    calculatorActionHandler(event.key)
+  }
 
   const buttonPressHandler = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     button: string
   ) => {
-    calculatorActionHandler(button);
-    const element = event.target as HTMLElement;
+    calculatorActionHandler(button)
+    const element = event.target as HTMLElement
     if (element) {
-      element.blur();
+      element.blur()
     }
-  };
+  }
 
   const calculatorActionHandler = (action: string) => {
     if (parseInt(action) || action === "0")
-      dispatchAction({ type: "NUMBER", number: action });
+      dispatchAction({ type: "NUMBER", number: action })
 
     if (
       action === "CE" ||
@@ -388,9 +388,9 @@ const Calculator = () => {
       action === "Escape" ||
       action === "Backspace"
     )
-      dispatchAction({ type: "CLEAR", clear: action });
+      dispatchAction({ type: "CLEAR", clear: action })
 
-    if (action === ".") dispatchAction({ type: "DECIMAL" });
+    if (action === ".") dispatchAction({ type: "DECIMAL" })
 
     if (
       action === "+" ||
@@ -399,23 +399,23 @@ const Calculator = () => {
       action === "/" ||
       action === "*"
     )
-      dispatchAction({ type: "ARITHMETIC", symbol: action });
+      dispatchAction({ type: "ARITHMETIC", symbol: action })
 
     if ((action === "=" || action === "Enter") && !activeElement)
-      dispatchAction({ type: "SUM" });
+      dispatchAction({ type: "SUM" })
 
     if (action === "(" || action === ")")
-      dispatchAction({ type: "BRACKET", bracket: action });
+      dispatchAction({ type: "BRACKET", bracket: action })
 
-    if (action === "+/-") dispatchAction({ type: "POS/NEG" });
-  };
+    if (action === "+/-") dispatchAction({ type: "POS/NEG" })
+  }
 
   const buttons = [
     ["1", "2", "3", "×"],
     ["4", "5", "6", "-"],
     ["7", "8", "9", "+"],
     ["0", ".", "+/-", "="],
-  ];
+  ]
 
   return (
     <div className={styles.calculator}>
@@ -435,8 +435,7 @@ const Calculator = () => {
             button="CE"
           />
           <div
-            className={`${buttonStyles.button} ${buttonStyles["button--half"]}`}
-          >
+            className={`${buttonStyles.button} ${buttonStyles["button--half"]}`}>
             <HalfButton
               buttonPress={event => buttonPressHandler(event, "(")}
               button="("
@@ -454,18 +453,18 @@ const Calculator = () => {
 
         {buttons.map((_row, i) => (
           <div key={i} className={styles.row}>
-            {buttons[i].map(button => (
+            {buttons[i].map(number => (
               <Button
-                key={button}
-                buttonPress={event => buttonPressHandler(event, button)}
-                button={button}
+                key={number}
+                buttonPress={event => buttonPressHandler(event, number)}
+                button={number}
               />
             ))}
           </div>
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Calculator;
+export default Calculator
