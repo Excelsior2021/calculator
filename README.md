@@ -11,6 +11,8 @@ A calculator that uses the [mathjs](https://mathjs.org) library.
 
 <br />
 
+<img src="readme_assets/calculator-demo.gif" alt="smash it demo" />
+
 <!-- About the Project -->
 
 ## Motivation
